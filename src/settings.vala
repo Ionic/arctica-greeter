@@ -26,6 +26,8 @@ public class AGSettings : Object
 {
     public const string KEY_BACKGROUND = "background";
     public const string KEY_BACKGROUND_COLOR = "background-color";
+    public const string KEY_HIGH_CONTRAST_BACKGROUND = "high-contrast-background";
+    public const string KEY_HIGH_CONTRAST_BACKGROUND_COLOR = "high-contrast-background-color";
     public const string KEY_BACKGROUND_MODE = "background-mode";
     public const string KEY_DRAW_USER_BACKGROUNDS = "draw-user-backgrounds";
     public const string KEY_DRAW_GRID = "draw-grid";
