@@ -9,6 +9,14 @@
       <default>'#4B1635'</default>
       <summary>Background color (e.g. #772953), set before wallpaper is seen</summary>
     </key>
+    <key name="high-contrast-background" type="s">
+      <default>'#FFFFFF'</default>
+      <summary>Background file to use in high contrast mode, either an image path or a color (e.g. #772953)</summary>
+    </key>
+    <key name="high-contrast-background-color" type="s">
+      <default>'#FFFFFF'</default>
+      <summary>Background color (e.g. #772953) in high contrast mode, set before wallpaper is seen</summary>
+    </key>
     <key name="togglebox-font-fgcolor" type="s">
       <default>'#808080'</default>
       <summary>Font foreground color (e.g. #A0A0A0) for non-active/-hovered and non-selected session names in the session list</summary>
