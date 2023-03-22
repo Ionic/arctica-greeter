@@ -557,6 +557,7 @@ public abstract class GreeterList : FadableBox
         var child_allocation = Gtk.Allocation ();
         child_allocation.width = grid_size * BOX_WIDTH - BORDER * 2;
         entry.get_preferred_height_for_width (child_allocation.width, null, out child_allocation.height);
+        debug ("move_entry: get_preferred_height_for_width: %d", child_allocation.height);
         child_allocation.x = allocation.x + get_greeter_box_x ();
         child_allocation.y = allocation.y + get_position_y (position);
         fixed.move (entry, child_allocation.x, child_allocation.y);
@@ -725,6 +726,7 @@ public abstract class GreeterList : FadableBox
         var child_allocation = Gtk.Allocation ();
         greeter_box.get_preferred_width (null, out child_allocation.width);
         greeter_box.get_preferred_height (null, out child_allocation.height);
+        debug ("allocate_greeter_box: get_preferred_height: %d", child_allocation.height);
         child_allocation.x = allocation.x + get_greeter_box_x ();
         child_allocation.y = allocation.y + get_greeter_box_y ();
         fixed.move (greeter_box, child_allocation.x, child_allocation.y);

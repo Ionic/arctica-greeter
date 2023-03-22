@@ -176,6 +176,7 @@ public class DashBox : Gtk.Box
                 nat = int.max (orig_height, nat);
             }
         }
+        debug ("get_preferred_height: min, nat: %d, %d", min, nat);
     }
 
     public override void get_preferred_width (out int min, out int nat)

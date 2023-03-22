@@ -370,11 +370,15 @@ public class PromptBox : FadableBox
     public override void get_preferred_height (out int min, out int nat)
     {
         base.get_preferred_height (out min, out nat);
+        debug ("queried min and nat: %d, %d", min, nat);
         min = round_to_grid (min + GreeterList.BORDER * 2) - GreeterList.BORDER * 2;
         nat = round_to_grid (nat + GreeterList.BORDER * 2) - GreeterList.BORDER * 2;
+        debug ("recalculated (rounded) min and nat: %d, %d", min, nat);
 
-        if (position <= -1 || position >= 1)
+        if (position <= -1 || position >= 1) {
             min = nat = grid_size;
+            debug ("Not at position 0, resetting min, nat to grid_size: %d, %d", min, nat);
+        }
     }
 #endif
 
@@ -780,6 +784,7 @@ public class PromptBox : FadableBox
 
     public override void size_allocate (Gtk.Allocation allocation)
     {
+        debug ("size_allocate: allocation: x %d, y %d, width %d, height %d", allocation.x, allocation.y, allocation.width, allocation.height);
         base.size_allocate (allocation);
         box_grid.size_allocate (allocation);
 
@@ -798,7 +803,9 @@ public class PromptBox : FadableBox
 
         Gtk.Allocation alloc, zone_alloc;
         this.get_allocation (out alloc);
+        debug ("draw_full_alpha: this.get_allocation: x %d, y %d, width %d, height %d", alloc.x, alloc.y, alloc.width, alloc.height);
         zone.get_allocation (out zone_alloc);
+        debug ("draw_full_alpha: zone.get_allocation: x %d, y %d, width %d, height %d", zone_alloc.x, zone_alloc.y, zone_alloc.width, zone_alloc.height);
 
         /* Draw main grid only in that area */
         c.save ();
