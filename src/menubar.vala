@@ -366,13 +366,11 @@ public class MenuBar : Gtk.MenuBar
         debug ("Initializing high contrast menu item to state %s", agsettings.high_contrast.to_string ());
         high_contrast_item.set_active (agsettings.high_contrast);
 
-/* Hide the Big Font feature until it's available.
         big_font_item = new Gtk.CheckMenuItem.with_label (_("Big Font"));
         big_font_item.toggled.connect (big_font_toggled_cb);
         big_font_item.add_accelerator ("activate", accel_group, Gdk.Key.b, Gdk.ModifierType.CONTROL_MASK, Gtk.AccelFlags.VISIBLE);
         big_font_item.show ();
         submenu.append (big_font_item);
-*/
 
         big_font_item.set_active (agsettings.big_font);
         var item = new Gtk.CheckMenuItem.with_label (_("Screen Reader"));
