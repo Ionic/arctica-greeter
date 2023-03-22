@@ -1,2 +1,6 @@
 [Seat:*]
-greeter-session=arctica-greeter
+# LightDM reads this configuration file independently of the selected greeter,
+# so this setting will always make it spawn Arctica Greeter.
+# Instead, we'll let LightDM figure out the greeter to use via the
+# update-alternatives system.
+#greeter-session=arctica-greeter
