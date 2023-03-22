@@ -525,6 +525,13 @@ public class Background : Gtk.Fixed
         if (mode == "spanned")
             flags |= DrawFlags.SPAN;
 
+        /* Reload backgrounds if the high contrast mode changes. */
+        var agsettings = new AGSettings ();
+        agsettings.notify["high-contrast"].connect (() => {
+            debug ("High contrast mode changed to %s.", agsettings.high_contrast.to_string ());
+            this.reload ();
+        });
+
         show ();
     }
 
@@ -658,7 +665,8 @@ public class Background : Gtk.Fixed
 
         c.restore ();
 
-        if (DrawFlags.GRID in flags)
+        var agsettings = new AGSettings ();
+        if ((DrawFlags.GRID in flags) && (!(agsettings.high_contrast)))
             overlay_grid (c);
     }
 
