@@ -163,6 +163,93 @@ public class MenuBar : Gtk.MenuBar
             onscreen_keyboard_item.set_active (AGSettings.get_boolean (AGSettings.KEY_ONSCREEN_KEYBOARD));
     }
 
+    private string state_flags_to_str (Gtk.StateFlags flags) {
+        var ret = "";
+        if (0 != (flags & Gtk.StateFlags.ACTIVE)) {
+            ret += "active";
+        }
+        if (0 != (flags & Gtk.StateFlags.BACKDROP)) {
+            if (ret.length != 0) {
+                ret += ", ";
+            }
+            ret += "backdrop";
+        }
+        if (0 != (flags & Gtk.StateFlags.CHECKED)) {
+            if (ret.length != 0) {
+                ret += ", ";
+            }
+            ret += "checked";
+        }
+        if (0 != (flags & Gtk.StateFlags.DIR_LTR)) {
+            if (ret.length != 0) {
+                ret += ", ";
+            }
+            ret += "dir_ltr";
+        }
+        if (0 != (flags & Gtk.StateFlags.DIR_RTL)) {
+            if (ret.length != 0) {
+                ret += ", ";
+            }
+            ret += "dir_rtl";
+        }
+        if (0 != (flags & Gtk.StateFlags.DROP_ACTIVE)) {
+            if (ret.length != 0) {
+                ret += ", ";
+            }
+            ret += "drop_active";
+        }
+        if (0 != (flags & Gtk.StateFlags.FOCUSED)) {
+            if (ret.length != 0) {
+                ret += ", ";
+            }
+            ret += "focused";
+        }
+        if (0 != (flags & Gtk.StateFlags.INCONSISTENT)) {
+            if (ret.length != 0) {
+                ret += ", ";
+            }
+            ret += "inconsistent";
+        }
+        if (0 != (flags & Gtk.StateFlags.INSENSITIVE)) {
+            if (ret.length != 0) {
+                ret += ", ";
+            }
+            ret += "insensitive";
+        }
+        if (0 != (flags & Gtk.StateFlags.LINK)) {
+            if (ret.length != 0) {
+                ret += ", ";
+            }
+            ret += "link";
+        }
+        if (0 != (flags & Gtk.StateFlags.NORMAL)) {
+            if (ret.length != 0) {
+                ret += ", ";
+            }
+            ret += "normal";
+        }
+        if (0 != (flags & Gtk.StateFlags.PRELIGHT)) {
+            if (ret.length != 0) {
+                ret += ", ";
+            }
+            ret += "prelight";
+        }
+        if (0 != (flags & Gtk.StateFlags.SELECTED)) {
+            if (ret.length != 0) {
+                ret += ", ";
+            }
+            ret += "selected";
+        }
+        if (0 != (flags & Gtk.StateFlags.VISITED)) {
+            if (ret.length != 0) {
+                ret += ", ";
+            }
+            ret += "visited";
+        }
+
+        return (ret);
+    }
+
     private List<Indicator.Object> indicator_objects;
     private Gtk.CheckMenuItem high_contrast_item;
     private Gtk.CheckMenuItem big_font_item;
@@ -187,6 +274,42 @@ public class MenuBar : Gtk.MenuBar
             var hostname_item = new Gtk.MenuItem.with_label (Posix.utsname ().nodename);
             append (hostname_item);
             hostname_item.show ();
+
+#if 0
+            {
+                debug ("Initial add of hostname item, debugging...");
+
+                debug ("Current sensitivity state of menubar: %s", this.get_sensitive ().to_string ());
+
+                debug ("Current state flags of menubar: %s", this.state_flags_to_str (this.get_state_flags ()));
+                debug ("Current style state flags of menubar: %s", this.state_flags_to_str (this.get_style_context ().get_state ()));
+
+                debug ("Current sensitivity state: %s", hostname_item.get_sensitive ().to_string ());
+
+                debug ("Current state flags: %s", this.state_flags_to_str (hostname_item.get_state_flags ()));
+                debug ("Current style state flags: %s", this.state_flags_to_str (hostname_item.get_style_context ().get_state ()));
+
+                var hostname_item_ctx = hostname_item.get_style_context ();
+                hostname_item_ctx.save ();
+                var color = hostname_item_ctx.get_color (Gtk.StateFlags.NORMAL);
+                debug ("Current color: %s", color.to_string ());
+                hostname_item_ctx.restore ();
+
+                if (gtk_is_container (hostname_item)) {
+                    var children = hostname_item.get_children ();
+                    foreach (Gtk.Widget element in children) {
+                        debug ("Current sensitivity state for child %s: %s", element.name, element.get_sensitive ().to_string ());
+
+                        debug ("Current state flags for child %s: %s", element.name, this.state_flags_to_str (element.get_state_flags ()));
+                        debug ("Current style state flags for child %s: %s", element.name, this.state_flags_to_str (element.get_style_context ().get_state ()));
+
+                        var element_ctx = element.get_style_context ();
+                        var element_color = element_ctx.get_color (Gtk.StateFlags.NORMAL);
+                        debug ("Current color for child %s: %s", element.name, element_color.to_string ());
+                    }
+                }
+            }
+#endif
 
             /*
              * Even though this (menu) item is insensitive, we want its label
@@ -266,7 +389,139 @@ public class MenuBar : Gtk.MenuBar
 
             hostname_item.set_sensitive (false);
 
+#if 0
+            {
+                debug ("Set hostname item to insensitive, debugging...");
+
+                debug ("Current sensitivity state of menubar: %s", this.get_sensitive ().to_string ());
+
+                debug ("Current state flags of menubar: %s", this.state_flags_to_str (this.get_state_flags ()));
+                debug ("Current style state flags of menubar: %s", this.state_flags_to_str (this.get_style_context ().get_state ()));
+
+                debug ("Current sensitivity state: %s", hostname_item.get_sensitive ().to_string ());
+
+                debug ("Current state flags: %s", this.state_flags_to_str (hostname_item.get_state_flags ()));
+                debug ("Current style state flags: %s", this.state_flags_to_str (hostname_item.get_style_context ().get_state ()));
+
+                hostname_item_ctx.save ();
+                var color = hostname_item_ctx.get_color (Gtk.StateFlags.NORMAL);
+                debug ("Current color: %s", color.to_string ());
+                hostname_item_ctx.restore ();
+
+                if (gtk_is_container (hostname_item)) {
+                    var children = hostname_item.get_children ();
+                    foreach (Gtk.Widget element in children) {
+                        debug ("Current sensitivity state for child %s: %s", element.name, element.get_sensitive ().to_string ());
+
+                        debug ("Current state flags for child %s: %s", element.name, this.state_flags_to_str (element.get_state_flags ()));
+                        debug ("Current style state flags for child %s: %s", element.name, this.state_flags_to_str (element.get_style_context ().get_state ()));
+
+                        var element_ctx = element.get_style_context ();
+                        var element_color = element_ctx.get_color (Gtk.StateFlags.NORMAL);
+                        debug ("Current color for child %s: %s", element.name, element_color.to_string ());
+                    }
+                }
+            }
+#endif
+
             hostname_item.set_right_justified (true);
+
+            /* Debugging. */
+            this.add_events (Gdk.EventMask.BUTTON_PRESS_MASK);
+            this.button_press_event.connect ((button) => {
+                debug ("Pressed menu, debugging...");
+
+                var agsettings = new AGSettings ();
+                debug ("High contrast state: %s", agsettings.high_contrast.to_string ());
+
+                debug ("Current sensitivity state: %s", hostname_item.get_sensitive ().to_string ());
+
+                debug ("Current state flags: %s", this.state_flags_to_str (hostname_item.get_state_flags ()));
+                debug ("Current style state flags: %s", this.state_flags_to_str (hostname_item.get_style_context ().get_state ()));
+
+                hostname_item_ctx.save ();
+                var color = hostname_item_ctx.get_color (Gtk.StateFlags.NORMAL);
+                debug ("Current color: %s", color.to_string ());
+                hostname_item_ctx.restore ();
+
+                if (gtk_is_container (hostname_item)) {
+                    var children = hostname_item.get_children ();
+                    foreach (Gtk.Widget element in children) {
+                        debug ("Current sensitivity state for child %s: %s", element.name, element.get_sensitive ().to_string ());
+
+                        debug ("Current state flags for child %s: %s", element.name, this.state_flags_to_str (element.get_state_flags ()));
+                        debug ("Current style state flags for child %s: %s", element.name, this.state_flags_to_str (element.get_style_context ().get_state ()));
+
+                        var element_ctx = element.get_style_context ();
+                        var element_color = element_ctx.get_color (Gtk.StateFlags.NORMAL);
+                        debug ("Current color for child %s: %s", element.name, element_color.to_string ());
+                    }
+                }
+
+                return false;
+            });
+
+#if 0
+            {
+                debug ("Set hostname item to sensitive, debugging...");
+                var glib_context = GLib.MainContext.get_thread_default ();
+                if (null == glib_context) {
+                    glib_context = GLib.MainContext.@default ();
+                }
+                while (glib_context.pending ()) {
+                    glib_context.iteration (false);
+                }
+
+                debug ("Current sensitivity state of menubar: %s", this.get_sensitive ().to_string ());
+
+                debug ("Current state flags of menubar: %s", this.state_flags_to_str (this.get_state_flags ()));
+                debug ("Current style state flags of menubar: %s", this.state_flags_to_str (this.get_style_context ().get_state ()));
+
+                debug ("Current sensitivity state: %s", hostname_item.get_sensitive ().to_string ());
+
+                debug ("Current state flags: %s", this.state_flags_to_str (hostname_item.get_state_flags ()));
+                debug ("Current style state flags: %s", this.state_flags_to_str (hostname_item.get_style_context ().get_state ()));
+
+                hostname_item_ctx.save ();
+                var color = hostname_item_ctx.get_color (Gtk.StateFlags.NORMAL);
+                debug ("Current color: %s", color.to_string ());
+                hostname_item_ctx.restore ();
+
+                if (gtk_is_container (hostname_item)) {
+                    var children = hostname_item.get_children ();
+                    foreach (Gtk.Widget element in children) {
+                        debug ("Current sensitivity state for child %s: %s", element.name, element.get_sensitive ().to_string ());
+
+                        debug ("Current state flags for child %s: %s", element.name, this.state_flags_to_str (element.get_state_flags ()));
+                        debug ("Current style state flags for child %s: %s", element.name, this.state_flags_to_str (element.get_style_context ().get_state ()));
+
+                        var element_ctx = element.get_style_context ();
+                        var element_color = element_ctx.get_color (Gtk.StateFlags.NORMAL);
+                        debug ("Current color for child %s: %s", element.name, element_color.to_string ());
+                    }
+                }
+            }
+#endif
+
+            // var sensitive_color_gval = label_ctx.get_property ("color", Gtk.StateFlags.NORMAL);
+            /*
+            var sensitive_color_gval = Value (GLib.Type.BOXED);
+            label_ctx.get_style_property ("color", ref sensitive_color_gval);
+            debug ("Directly fetched sensitive color: %s", ((Gdk.RGBA *)(sensitive_color_gval.get_boxed ()))->to_string ());
+            hostname_item.sensitive = false;
+            label_ctx.restore ();
+            if (sensitive_color_gval.holds (GLib.Type.BOXED)) {
+                var sensitive_color = (Gdk.RGBA *)(sensitive_color_gval.get_boxed ());
+
+                if (sensitive_color != null) {
+                    debug ("Sensitive color of label: %s", sensitive_color->to_string ());
+                    insensitive_override_style.load_from_data ("*:disabled { color: %s; }".printf(sensitive_color->to_string ()), -1);
+                    label_ctx.add_provider (insensitive_override_style,
+                                            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+                }
+            }
+            sensitive_color_gval.unset ();
+            */
         }
 
         /* Prevent dragging the window by the menubar */
