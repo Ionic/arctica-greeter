@@ -97,6 +97,10 @@ public class ToggleBox : Gtk.Box
 
     public void set_normal_button_style (Gtk.Button button)
     {
+        /*
+        var label = ((Gtk.Container) (((Gtk.Container) (button)).get_children ().nth_data (0))).get_children ().nth_data (1) as Gtk.Label;
+        debug ("processing button with label text %s - adding custom style", label.get_text ());
+        */
         try
         {
             /* Tighten padding on buttons to not be so large, default color scheme for buttons */
