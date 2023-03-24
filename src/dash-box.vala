@@ -44,6 +44,12 @@ public class DashBox : Gtk.Box
     public DashBox (Background bg)
     {
         Object (background: bg);
+
+        /* Redraw on high contrast change. */
+        var agsettings = new AGSettings ();
+        agsettings.notify["high-contrast"].connect (() => {
+            this.queue_draw ();
+        });
     }
 
     construct
