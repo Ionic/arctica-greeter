@@ -190,6 +190,7 @@ public class PromptBox : FadableBox
 
     private delegate void CSSChange ();
     private Gtk.CssProvider? text_css_provider = null;
+    private Gtk.CssProvider? option_button_css_provider = null;
 
     protected virtual Gtk.Grid create_name_grid ()
     {
@@ -281,36 +282,60 @@ public class PromptBox : FadableBox
         var option_button_ctx = option_button.get_style_context ();
         option_button_ctx.add_class ("option-button");
 
-        try {
-            /*
-             * Override background for both high-contrast and normal modes.
-             * Note that we have to use CSS selectors here, since this code
-             * is only executed once.
-             */
-            var background_style = new Gtk.CssProvider ();
-            background_style.load_from_data ("button.flat.option-button.high_contrast {\n" +
-                                             "   background-color: %s;\n".printf("rgba(0,0,0,1.0)") +
-                                             "   background-image: none;\n" +
-                                             "}\n" +
-                                             "button.flat.option-button:hover:not(.high_contrast), " +
-                                             "button.flat.option-button:active:not(.high_contrast), " +
-                                             "button.flat.option-button:hover:active:not(.high_contrast) {\n"+
-                                             "   background-color: %s;\n".printf("rgba(255,255,255,0.5)")+
-                                             "   background-image: none;"+
-                                             "}\n" +
-                                             "button.flat.option-button:hover.high_contrast," +
-                                             "button.flat.option-button:active.high_contrast," +
-                                             "button.flat.option-button:hover:active.high_contrast {\n" +
-                                             "   background-color:%s;\n".printf("rgba(70, 70, 70, 1.0)") +
-                                             "   background-image: none;" +
-                                             "}\n", -1);
-            option_button_ctx.add_provider (background_style,
-                                            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-        }
-        catch (Error e)
-        {
-            debug ("Internal error loading option button background style: %s", e.message);
-        }
+        CSSChange option_button_css_func = () => {
+            try {
+                /*
+                 * Override background for both high-contrast and normal modes.
+                 * Note that we have to use CSS selectors here, since this code
+                 * is only executed once.
+                 */
+                bool add = false;
+                if (null == this.option_button_css_provider) {
+                    this.option_button_css_provider = new Gtk.CssProvider ();
+                    add = true;
+                }
+
+                var css = "button.flat.option-button.high_contrast {\n" +
+                          "   background-color: %s;\n".printf("rgba(0,0,0,1.0)") +
+                          "   background-image: none;\n" +
+                          "}\n" +
+                          "button.flat.option-button:hover:not(.high_contrast), " +
+                          "button.flat.option-button:active:not(.high_contrast), " +
+                          "button.flat.option-button:hover:active:not(.high_contrast) {\n"+
+                          "   background-color: %s;\n".printf("rgba(255,255,255,0.5)")+
+                          "   background-image: none;"+
+                          "}\n" +
+                          "button.flat.option-button:hover.high_contrast," +
+                          "button.flat.option-button:active.high_contrast," +
+                          "button.flat.option-button:hover:active.high_contrast {\n" +
+                          "   background-color:%s;\n".printf("rgba(70, 70, 70, 1.0)") +
+                          "   background-image: none;" +
+                          "}\n";
+                this.option_button_css_provider.load_from_data (css, -1);
+                if (add) {
+                    option_button_ctx.add_provider (this.option_button_css_provider,
+                                                    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+                }
+            }
+            catch (Error e)
+            {
+                debug ("Internal error loading option button background style: %s", e.message);
+            }
+        };
+
+        global_background.notify["alpha"].connect (() => {
+            debug ("Alpha property of global background changed, new value: %f", global_background.alpha);
+            if (1.0 == global_background.alpha) {
+                debug ("Calling option_button_css_func () ...");
+                option_button_css_func ();
+            }
+        });
+
+        debug ("global_background.current_background: %s", global_background.current_background);
+        GLib.Timeout.add (10000, () => {
+                                         debug ("global_background.current_background after 10 seconds: %s", global_background.current_background);
+                                         return false;
+                                       });
 
         option_button.hexpand = true;
         option_button.halign = Gtk.Align.END;
