@@ -228,10 +228,17 @@ public class DashBox : Gtk.Box
 
         CairoUtils.rounded_rectangle (c, 0, box_y, box_w, box_h, box_r);
 
+        /*
+         * In high contrast mode, we select a contrast color (either black or
+         * white) based on the background's average color.
+         */
+        var contrast_color = Utils.contrast_color (background.average_color);
+
         var agsettings = new AGSettings ();
         if (agsettings.high_contrast)
         {
-            c.set_source_rgba (1.0, 1.0, 1.0, 1.0);
+            c.set_source_rgba (contrast_color.red, contrast_color.green,
+                               contrast_color.blue, 1.0);
         }
         else
         {
@@ -241,7 +248,18 @@ public class DashBox : Gtk.Box
 
         if (agsettings.high_contrast)
         {
-            c.set_source_rgba (0.0, 0.0, 0.0, 1.0);
+            /*
+             * For the border, we'll pick the inverted contrast color. This
+             * has a few consequences:
+             *   - this will make a rather low-contrast border
+             *   - for very bright or dark backgrounds, it will be hardly
+             *     visible.
+             *
+             * That's fine, though. The important data is *within* the border.
+             */
+            c.set_source_rgba ((1.0 - contrast_color.red),
+                               (1.0 - contrast_color.green),
+                               (1.0 - contrast_color.blue), 1.0);
         }
         else
         {
