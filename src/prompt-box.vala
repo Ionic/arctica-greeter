@@ -188,6 +188,9 @@ public class PromptBox : FadableBox
         debug ("Using font size base '%d'.", font_size);
     }
 
+    private delegate void CSSChange ();
+    private Gtk.CssProvider? text_css_provider = null;
+
     protected virtual Gtk.Grid create_name_grid ()
     {
         var name_grid = new Gtk.Grid ();
@@ -210,19 +213,43 @@ public class PromptBox : FadableBox
             debug ("Internal error loading font style (%s, %dpt): %s", font_family, font_size+2, e.message);
         }
 
-        try
-        {
-            var color_provider = new Gtk.CssProvider ();
-            var css = "* { color: rgba(255, 255, 255, 1.0); }\n" +
-                      ".high_contrast { color: rgba (0, 0, 0, 1.0); }";
-            color_provider.load_from_data (css, -1);
-            style_ctx.add_provider (color_provider,
-                                    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
-        }
-        catch (Error e)
-        {
-            debug ("Internal error setting color on name label: %s", e.message);
-        }
+        CSSChange text_color_css_func = () => {
+            /* Get contrast color compared to the background. */
+            var contrast_color = Utils.contrast_color (global_background.average_color);
+
+            try
+            {
+                bool add = false;
+                if (null == this.text_css_provider) {
+                    this.text_css_provider = new Gtk.CssProvider ();
+                    add = true;
+                }
+
+                var css = "* { color: rgba(255, 255, 255, 1.0); }\n" +
+                          ".high_contrast { color: rgba (%f, %f, %f, 1.0); }".printf (contrast_color.red,
+                                                                                      contrast_color.green,
+                                                                                      contrast_color.blue);
+                this.text_css_provider.load_from_data (css, -1);
+
+                if (add) {
+                    style_ctx.add_provider (this.text_css_provider,
+                                            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+                }
+            }
+            catch (Error e)
+            {
+                debug ("Internal error setting color on name label: %s", e.message);
+            }
+        };
+
+        /* Make sure that the color changes on high contrast and background changes. */
+        global_background.notify["alpha"].connect (() => {
+            debug ("Alpha property of global background changed, new value: %f", global_background.alpha);
+            if (1.0 == global_background.alpha) {
+                debug ("Calling text_color_css_func () ...");
+                text_color_css_func ();
+            }
+        });
 
         name_label.valign = Gtk.Align.START;
         name_label.vexpand = true;
