@@ -401,42 +401,95 @@ public class Background : Gtk.Fixed
     /* Fallback bgcolor - shown upon first startup, until an async background loader finishes,
      * or until a user background or default background is loaded.
      */
+    private delegate void ParseColor (string color_prop, string default_val, out string parsed);
     private string _fallback_bgcolor = null;
+    private string _high_contrast_fallback_bgcolor = null;
     public string fallback_bgcolor {
         get {
-            if (_fallback_bgcolor == null)
-            {
-                var settings_bgcolor = AGSettings.get_string (AGSettings.KEY_BACKGROUND_COLOR);
-                var color = Gdk.RGBA ();
-
-                if (settings_bgcolor == "" || !color.parse (settings_bgcolor))
+            /* Try not to duplicate code. */
+            ParseColor parse = (color_prop, default_val, out parsed) => {
+                if (null == parsed)
                 {
-                    settings_bgcolor = "#000000";
+                    var settings_bgcolor = AGSettings.get_string (color_prop);
+                    var color = Gdk.RGBA ();
+
+                    if (settings_bgcolor == "" || !color.parse (settings_bgcolor))
+                    {
+                        settings_bgcolor = default_val;
+                    }
+
+                    parsed = settings_bgcolor;
                 }
+            };
 
-                _fallback_bgcolor = settings_bgcolor;
+            parse (AGSettings.KEY_BACKGROUND_COLOR, "#000000", out _fallback_bgcolor);
+            parse (AGSettings.KEY_HIGH_CONTRAST_BACKGROUND_COLOR, "#FFFFFF", out _high_contrast_fallback_bgcolor);
+
+            /*
+             * This part feels wonky. We're returning different values based
+             * on the high contrast setting, but do not notify any users about
+             * the change.
+             *
+             * While it will probably work just fine (since no one listens to
+             * changes on this property anyway), it doesn't sound right.
+             *
+             * We might want to fix that properly...
+             */
+            var agsettings = new AGSettings ();
+            if (agsettings.high_contrast)
+            {
+                return _high_contrast_fallback_bgcolor;
             }
-
-            return _fallback_bgcolor;
+            else
+            {
+                return _fallback_bgcolor;
+            }
         }
     }
 
+    private delegate void ParseBG (string bg_prop, string fallback, out string parsed);
     private string _system_background;
+    private string _high_contrast_system_background;
     public string? system_background {
         get {
-            if (_system_background == null)
-            {
-                var system_bg = AGSettings.get_string (AGSettings.KEY_BACKGROUND);
-
-                if (system_bg == "")
+            ParseBG parse = (bg_prop, fallback, out parsed) => {
+                if (null == parsed)
                 {
-                    system_bg = fallback_bgcolor;
+                    var system_bg = AGSettings.get_string (bg_prop);
+
+                    if (system_bg == "")
+                    {
+                        system_bg = fallback;
+                    }
+
+                    parsed = system_bg;
                 }
+            };
 
-                _system_background = system_bg;
+            /*
+             * Note that we have to call the fallback_bgcolor getter in order
+             * to populate the actual private variables.
+             *
+             * Since we will use them later on, they must be properly set.
+             */
+            var ignore = this.fallback_bgcolor;
+
+            parse (AGSettings.KEY_BACKGROUND, _fallback_bgcolor, out _system_background);
+            parse (AGSettings.KEY_HIGH_CONTRAST_BACKGROUND, _high_contrast_fallback_bgcolor, out _high_contrast_system_background);
+
+            /*
+             * Same blurb as in the fallback_color property getter applies
+             * here as well.
+             */
+            var agsettings = new AGSettings ();
+            if (agsettings.high_contrast)
+            {
+                return _high_contrast_system_background;
             }
-
-            return _system_background;
+            else
+            {
+                return _system_background;
+            }
         }
     }
 
