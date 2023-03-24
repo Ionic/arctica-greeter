@@ -260,12 +260,13 @@ public class DashBox : Gtk.Box
             c.set_source_rgba ((1.0 - contrast_color.red),
                                (1.0 - contrast_color.green),
                                (1.0 - contrast_color.blue), 1.0);
+            c.set_line_width (5);
         }
         else
         {
             c.set_source_rgba (0.4, 0.4, 0.4, 0.4);
+            c.set_line_width (1);
         }
-        c.set_line_width (1);
         c.stroke ();
 
         c.restore ();
