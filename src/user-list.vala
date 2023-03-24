@@ -276,7 +276,7 @@ public class UserList : GreeterList
             var list_name = user_list_name_for_remote_directory_server (remote_server);
             if (find_entry (list_name) == null)
             {
-                var e = new PromptBox (list_name);
+                var e = new PromptBox (list_name, background);
                 e.label = remote_server.name;
                 e.respond.connect (remote_directory_respond_cb);
                 e.show_options.connect (show_remote_account_dialog);
@@ -325,7 +325,7 @@ public class UserList : GreeterList
 
     private PromptBox create_prompt_for_login_server (RemoteServer remote_server)
     {
-        var e = new PromptBox (user_list_name_for_remote_login_server (remote_server));
+        var e = new PromptBox (user_list_name_for_remote_login_server (remote_server), background);
         e.label = remote_server.name;
         e.respond.connect (remote_login_respond_cb);
         add_entry (e);
@@ -887,7 +887,7 @@ public class UserList : GreeterList
         var e = find_entry (name) as UserPromptBox;
         if (e == null)
         {
-            e = new UserPromptBox (name);
+            e = new UserPromptBox (name, this.background);
             e.respond.connect (prompt_box_respond_cb);
             e.login.connect (prompt_box_login_cb);
             e.show_options.connect (prompt_box_show_options_cb);

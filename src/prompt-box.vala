@@ -47,6 +47,7 @@ public class PromptBox : FadableBox
 
     private Gtk.Fixed fixed;
     private Gtk.Widget zone; /* when overlapping zone we are fully expanded */
+    protected Background global_background;
 
     /* Expanded widgets */
     protected Gtk.Grid box_grid;
@@ -87,9 +88,10 @@ public class PromptBox : FadableBox
     }
     private PromptVisibility prompt_visibility = PromptVisibility.HIDDEN;
 
-    public PromptBox (string id)
+    public PromptBox (string id, Background background)
     {
         Object (id: id);
+        this.global_background = background;
     }
 
     construct

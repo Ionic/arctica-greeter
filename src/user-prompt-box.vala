@@ -30,8 +30,9 @@ public class UserPromptBox : PromptBox
     /* True if should be marked as active */
     public bool is_active = false;
 
-    public UserPromptBox (string name)
+    public UserPromptBox (string name, Background background)
     {
         Object (id: name);
+        this.global_background = background;
     }
 }
